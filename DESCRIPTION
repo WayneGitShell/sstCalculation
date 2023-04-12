@@ -1,0 +1,35 @@
+Package: sstCalculation
+Title: Swiss Solvency Test (SST) Standard Models
+Authors@R: c(
+    person("Laurent", "Dudok de Wit", role = c("aut")),
+    person("Jerome", "Spielmann", role = "cre", email = "jerome.spielmann@finma.ch"),
+    person("Matteo", "Gambara", role = "ctb"),
+    person("Kauth", "Daniel", role = "ctb"),
+    person("Adrien", "Lamit", role = "ctb"),
+    person(family = "Swiss Financial Market Supervisory Authority FINMA", role = "cph")
+    )
+License: GPL-3 + file LICENSE
+Version: 2.4.1
+Description: Framework for the implementation of solvency related computations based on 
+             standard models for the Swiss Solvency Test (SST), a risk-based capital standard for Swiss 
+             insurance companies. Allows Monte Carlo simulation of market risk, some insurance risks and 
+             their aggregation. Additional toolbox for preprocessing computations. Convenient 'shiny' GUI 
+             combined with a parser for an input 'Excel' (.xlsx) template to simplify model configuration, 
+             data fill-in and results visualization.
+Depends: R (>= 3.3.0)
+Imports: data.table (>= 1.10.4-3), stats, utils, tools, readxl (>=
+        1.0.0), openxlsx (>= 4.0.17), MASS, shiny (>= 1.0.5),
+        shinydashboard (>= 0.6.1)
+Encoding: UTF-8
+Suggests: testthat, knitr, covr, rmarkdown
+RoxygenNote: 7.2.1
+VignetteBuilder: knitr
+Author: Laurent Dudok de Wit [aut],
+  Jerome Spielmann [ctb, cre],
+  Matteo Gambara [ctb],
+  Kauth Daniel [ctb],
+  Adrien Lamit [ctb],
+  Swiss Financial Market Supervisory Authority FINMA [cph]
+Maintainer: Jerome Spielmann <jerome.spielmann@finma.ch>
+NeedsCompilation: no
+Packaged: 2022-10-24 06:52:16 UTC; F11589

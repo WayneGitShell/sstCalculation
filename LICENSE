@@ -1,0 +1,29 @@
+This program is intended to run simulations to determine target capitals based on a SST standard model.
+
+Copyright (c) 2022 Swiss Financial Market Supervisory Authority FINMA
+
+Swiss Financial Market Supervisory Authority FINMA
+Laupenstrasse 27
+CH-3003 Bern
+
+info@finma.ch
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, version 3 of the License (GPL-3 License).
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program.  If not, see <http://www.gnu.org/licenses/>.
+
+The following additional terms (cf. Section 7 of the GPL-3 License) apply
+
+- Licensees are specifically prohibited from making any misrepresentation of
+the origin of the materials licensed hereunder, they shall mark modified versions
+of such materials in reasonable ways as different from the original version.
+- Licensees shall not use the name of Swiss Financial Market Supervisory
+Authority (FINMA) for publicity purposes and any rights under trademark law for
+use of trade names, trademarks or service marks are hereby explicitly declined.

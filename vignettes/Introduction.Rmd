@@ -1,0 +1,226 @@
+---
+title: "Introduction to sstCalculation"
+author: "FINMA"
+date: "`28.09.2022`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to sstCalculation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, include = FALSE}
+x <- list("Standalones_Simulations" = NA,
+          "Risk_factors_simulations" = NA,
+          "Target_capital_decomposition" = NA,
+          "Open_FDS" = NA,
+          "Internal_parameters" = NA)
+x <- sstCalculation:::namedObject(x, "SST simulation results", "Object")
+result <- sstCalculation:::retClass(x, "sstSimulation")
+
+# base_case <- list("Standalones_Simulations" = NA,
+#                   "Risk_factors_simulations" = NA,
+#                   "Target_capital_decomposition" = NA,
+#                   "Internal_parameters" = NA)
+# 
+# base_case <- sstCalculation:::namedObject(base_case, "SST simulation results", "Object")
+# result <- list(`Base case` = sstCalculation:::retClass(base_case, "sstSimulation"), 
+#                open_FDS = function(){openxlsx::openXL(wb)})
+```
+
+This vignette introduces the use of the `sstCalculation` package to perform the solvency calculation under the Swiss Solvency Test (SST) framework.
+
+## Introduction
+### SST-Template
+The SST-Template is an Excel template containing the company name together with all inputs required for the solvency calculation of one insurance company. The FINMA defines the structure of the template and the insurance companies fill it accordingly.
+
+The current version of the SST-Template is available under the following path:
+
+`www.finma.ch > Supervision > Insurers > Cross-Sectoral Tools > Swiss Solvency Test (SST)`
+
+
+### Solvency model
+
+The `sstCalculation` package can perform the solvency calculation with and without the standard model for participation (participation model).
+
+#### The participation model is used
+
+Broadly speaking, the participation model covers the case where one single insurance company (mother) holds a material participation in one or more insurance companies (daughters). When the standard model for participation is used, the insurance company needs to fill multiple SST-Templates: one for the mother company and one for each daughter company. In the SST-Template of each daughter, it can be chosen
+
+* if LLPO is applied,
+* if simulated risk of the daughter is shown in market risk of participations.
+
+#### The participation model is not used
+
+When the participation model is not used, the insurance company needs to fill one SST-Template.
+By abuse of language, we will consider this standard case as a company with one mother and no daughter company.
+
+## Performing the solvency calculation
+We illustrate the solvency calculation in the case where the participation model is used with one mother and one daughter company. If the participation model is not used, the following explanations are identical, with the exception that only one SST-Template is provided.
+
+The function `sstCalculation` performs the solvency calculation based on the specified SST-Templates:
+
+```{r, results = FALSE, warning = FALSE, eval = FALSE}
+result <- sstCalculation(path = c("~/SST-Template_daughter.xlsx", "~/SST-Template_mother.xlsx"),
+                         nsim = 1000, seed = 123
+)
+```
+The mother and daughter templates are automatically identified based on their content. Therefore **no specific order** is required for the paths. If no seed is specified, the default chosen value is 1.
+
+As we see below, the solvency calculation is a two-stage process. First, the SST-Templates are loaded and validated. Then the simulations are performed and aggregated. 
+
+```{r, eval = TRUE, echo = FALSE}
+cat("Loading\n")
+cat("|======================================================================================| 100%")
+cat("Performing simulations\n")
+cat("|======================================================================================| 100%")
+```
+
+Additional details about this function are available in the documentation, see `?sstCalculation`.
+
+
+## Accessing the solvency results
+
+The variable ``result`` is a *list* that contains the simulation results produced by `sstCalculation`:
+
+```{r, eval = TRUE, echo = FALSE}
+cat("--------------------------------------------------\n")
+cat("               Simulations results\n")
+cat("--------------------------------------------------\n")
+cat("- Element `Base case`\n")
+cat("- Element `Open_FDS`\n")
+```
+
+
+As the name suggests, `Base case` represents the default result produced by the tool (see section 'Variants' in 'Advanced functions' for more information). One can access to these elements with the command ``result$`Base case` ``, which is again a *list*:
+
+```{r, eval = TRUE, echo = FALSE}
+cat("--------------------------------------------------\n")
+cat("               SST simulation results\n")
+cat("--------------------------------------------------\n")
+cat("- Object `Standalones_Simulations`\n")
+cat("- Object `Risk_factors_simulations`\n")
+cat("- Object `Target_capital_decomposition`\n")
+cat("- Object `Internal_parameters`\n")
+```
+
+In the following we will describe the content of each object. We recall that, as usual, we can access any element from a list by using this command
+```{r, eval = FALSE}
+result$`Base case`$Standalones_Simulations
+```
+
+### Standalones_Simulations
+The `Standalones_Simulations` is a matrix containing the simulations of one-year change of the RBC stemming from specific risk categories plus some indicators at the end.
+
+This matrix is stored as `data.table` and has the following columns:
+
+* `life.all`, `life.Mortality`, ...: Total life risk, life risk from *mortality*, ...
+* `nonlife.all`, `nonlife.PY`, `nonlife.CY`: Total nonlife risk, PY risk, CY risk.
+* `nonlife.all_beforeScenario`: Total nonlife risk before the aggregation of nonlife scenarios.
+* `health.all`, `health.Individual health`, ...: Total health risk, healh risk from *individual health*, ...
+* `health.all_beforeScenario`: Total health risk before the aggregation of health scenarios.
+* `market.all`, `market.equity`, ...: Total market risk, market risk from *equity*, ...
+* `market.participation`: Market risk from immaterial participations.
+* `credit.all`, `credit.Basel.all`, ...: Total credit risk, total credit risk from (deterministic) Basel III model, ...
+* `scenario.all`: Total risk from scenarios (*except* health and nonlife scenarios).
+* `constant.all`, `constant.expectedFinancialResult`, ...: Constants coming from the deterministic part of the model (*except* credit risk) which include expected results and additional effects on target capital.
+* `insurance.all`: Total insurance risk.
+* `insurance_market_credit.all`: Total insurance, market and credit risk.
+* `insurance_market_credit_scenario.all`: Total insurance, market, credit and scenarios risk.
+* `insurance_market_credit_scenario_LLPO.all`: Total insurance, market, credit and scenarios risk after LLPO application.
+* `deltaRBC_beforeLLPO`: RBC variation before LLPO application.
+* `deltaRBC`: Total RBC variation.
+* `simulation_id`: Unique identifier of the simulations per company.
+<!-- * `flooringThreshold`: `NA`. In case of LLPO application, threshold at which the simulations `insurance_market_scenario.all` of the daughter company is floored. The impact of the LLPO is considered in `scenario.all` in order to keep the simulation result consistent.  -->
+* `Template`: Indicator telling the name of the company from the SST Template.
+* `MainResults`: `TRUE` for the simulations used to compute the results in the FDS, `FALSE` otherwise.
+
+The `nonlife.PY`, `nonlife.CY` are simulated by the R-Tool from the captive module if the nonlife insurance risk is set to `captive`. Otherwise, each of these two columns contains a constant value, which is provided by the company in the SST-Template and which corresponds to the expected shortfall.
+
+### Risk_factors_simulations
+The `Risk_factors_simulations` is a matrix containing the simulations per risk factor, whose names are defined in the SST-Template.
+
+This matrix is stored as `data.table` and has the following columns:
+
+* `life.Mortality`, `life.Longevity`, ...: life risk factors.
+* `health.Individual health` and `health.Collective compensation`: health risk factors.
+* `market.CHF 2Y`, `market.CHF 10Y`, ...: market risk factors.
+* `scenario.scenarioId`: this is a technical quantity that is produced by the tool and is needed for internal purposes. This column is present even if no scenario aggregation takes place.
+* `simulation_id`: unique identifier of the simulations per company (as for `Standalones_Simulations`).
+
+Note that nonlife risk factors are *not* simulated because the nonlife risk model is not based on risk factors. Another consideration holds true for the stochastic part of credit risk: since a different idiosyncratic risk factor is considered for each counterparty, it was decided not to include them.
+
+Risk factors simulations for mother and daughter are the same. The `simulation_id`  of `Standalones_Simulations` corresponds to the number of the risk factors simulation.
+
+
+
+### Target_capital_decomposition
+Key figures that appear in the FDS and are also displayed when using the dashboard. An example is the following:
+
+```
+Key Figures Value in Mio. CHF
+ 1:                            Insurance risk       324.1518805
+ 2:                               Market risk      1090.5209307
+ 3:                               Credit risk       954.0128005
+ 4:                    Diversification effect      -278.7490686
+ 5:           Insurance, Market & Credit risk      2089.9365431
+ 6:                                  Scenario         0.0000000
+ 7:  Insurance, Market, Credit with Scenarios      2089.9365431
+ 8:                 Expected insurance result         0.7046668
+ 9:                 Expected financial result       206.8943485
+10:                   Additional effect on TC         0.0000000
+11: Impact of LLPO (only participation model)         0.0000000
+12:                                       SCR      1882.3375278
+13:                                       MVM       288.0672296
+14:                            Target capital      2170.4047574
+```
+
+
+<!-- ### Instrument_list -->
+
+<!-- The market risk is simulated based on valuation functions, which are defined for multiple types of financial instruments. The `Instrument_list` is provided for transparency purposes and contains all the valuation function for the financial instruments.  -->
+
+<!-- * `Template`: Name of the company from the SST Template -->
+<!-- * `standaloneTypes`: Either `all` or the name of the selected risk category -->
+<!-- * `instrumentId`: Each single market risk instrument (per company) has a unique identifier. -->
+<!-- * `instrument`: Type of the financial instrument. For simplicity, forwards are articially split into two financial instruments (delivery and underlying). -->
+<!-- * `valuationFunction`: The valuation function associated to the financial instrument for the specified risk category -->
+
+<!-- One example of valuation function is: -->
+
+<!-- ``` -->
+<!-- -21.8561639011052*(exp(-1*[EUR 2Y] + 1*[EURCHF] -0.00250324128279224) - 1) -->
+<!-- ``` -->
+
+### Open_FDS
+
+This is actually a function: if we run `result$Open_FDS()`, then the generated FDS (of all variants - for more information see 'Advanced functions') will appear. Once the Excel file is opened, it can be saved for future purposes.  
+
+## Advanced functions
+
+### 2-stage process
+
+The `sstCalculation` function is a two-stage process. For an increased transparency, the advanced user can access to each step separately.
+
+First, the SST-Template is loaded and validated:
+
+```{r, results = FALSE, warning = FALSE, eval = FALSE}
+model <- excelToModelSST(path = c("~/SST-Template_daughter.xlsx", "~/SST-Template_mother.xlsx"))
+```
+Then simulations can be performed from the model:
+
+```{r, results = FALSE, warning = FALSE, eval = FALSE}
+result <- simulate(model, nsim = 1000)
+```
+For more information, it is possible to type `?excelToModelSST` and `?simulate`, respectively.
+
+### Variants
+
+It is possible to perform batch computations to obtain as-if results and output using different variants of the input. This possibility is enabled by copying and pasting one of the existing sheets of the SST-Template, changing the parameters inside the copied sheet and renaming the sheet with the convention 'old_name__##', where the previous name of the sheet is followed by double underscore and 2 characters (letters or numbers). The default case is called `Base case`. If variants are used, multiple versions of the FDS are produced.

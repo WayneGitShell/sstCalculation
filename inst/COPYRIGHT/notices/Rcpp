@@ -1,0 +1,13 @@
+RCpp is distributed under the GPL license version 2 or later.
+--------------------------------------------------
+
+Copyright (C) 2018 Dirk Eddelbuettel <edd@debian.org>
+Copyright (C) 2018 Romain Francois
+Copyright (C) 2018 JJ Allaire
+Copyright (C) 2018 Kevin Ushey
+Copyright (C) 2018 Qiang Kou
+Copyright (C) 2018 Nathan Russell
+Copyright (C) 2018 Douglas Bates
+Copyright (C) 2018 John Chambers
+
+See https://cran.r-project.org/web/packages/Rcpp/index.html

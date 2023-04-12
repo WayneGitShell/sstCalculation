@@ -1,0 +1,22 @@
+Digest is distributed under the GPL license version 2 or later.
+--------------------------------------------------
+
+Copyright (C) 2018 Dirk Eddelbuettel <edd@debian.org>
+Copyright (C) 2018 Antoine Lucas
+Copyright (C) 2018 Jarek Tuszynski
+Copyright (C) 2018 Henrik Bengtsson
+Copyright (C) 2018 Simon Urbanek
+Copyright (C) 2018 Mario Frasca
+Copyright (C) 2018 Bryan Lewis
+Copyright (C) 2018 Murray Stokely
+Copyright (C) 2018 Hannes Muehleisen
+Copyright (C) 2018 Duncan Murdoch
+Copyright (C) 2018 Jim Hester
+Copyright (C) 2018 Wush Wu
+Copyright (C) 2018 Qiang Kou
+Copyright (C) 2018 Thierry Onkelinx
+Copyright (C) 2018 Michel Lang
+Copyright (C) 2018 Viliam Simko
+Copyright (C) 2018 Kurt Hornik.
+
+See https://cran.r-project.org/web/packages/digest/index.html
